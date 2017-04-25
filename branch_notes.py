@@ -34,12 +34,6 @@ def main():
                               "notes file for the given branch is created."))
     options = parser.parse_args()
 
-    if options.branch != CURRENT_BRANCH_OPTION and not options.toplevel:
-        print("'%s' has to be specified when '%s' is not '%s'." %
-              (TOPLEVEL_OPTION, BRANCH_OPTION, CURRENT_BRANCH_OPTION))
-        return RESULT_ERROR
-
-
     # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
     # current git branch.
     if options.branch == CURRENT_BRANCH_OPTION:
@@ -67,6 +61,7 @@ def main():
             toplevel = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
         except subprocess.CalledProcessError as e:
             print("Failed to determine git toplevel from current dir: %s" % e)
+            print("Try specifying '%s'." % TOPLEVEL_OPTION)
             return RESULT_ERROR
         toplevel = os.path.basename(toplevel)
 
