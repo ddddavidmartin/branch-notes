@@ -46,6 +46,7 @@ def main():
         branch = ""
         git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
         try:
+            # rstrip is necessary to remove the newline of the returned output.
             branch = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
         except subprocess.CalledProcessError as e:
             print("Failed to determine git branch from current dir: %s" % e)
@@ -62,6 +63,7 @@ def main():
     else:
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
+            # rstrip is necessary to remove the newline of the returned output.
             toplevel = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
         except subprocess.CalledProcessError as e:
             print("Failed to determine git toplevel from current dir: %s" % e)
