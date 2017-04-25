@@ -35,8 +35,8 @@ def main():
     options = parser.parse_args()
 
     if options.branch != CURRENT_BRANCH_OPTION and not options.toplevel:
-        print("'%s' has to be specified when '%s' is not '-'." %
-              (TOPLEVEL_OPTION, BRANCH_OPTION))
+        print("'%s' has to be specified when '%s' is not '%s'." %
+              (TOPLEVEL_OPTION, BRANCH_OPTION, CURRENT_BRANCH_OPTION))
         return RESULT_ERROR
 
 
@@ -46,7 +46,7 @@ def main():
         branch = ""
         git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
         try:
-            branch = subprocess.check_output(git_cmd).rstrip().decode('UTF-8')
+            branch = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
         except subprocess.CalledProcessError as e:
             print("Failed to determine git branch from current dir: %s" % e)
             return RESULT_ERROR
@@ -62,7 +62,7 @@ def main():
     else:
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
-            toplevel = subprocess.check_output(git_cmd).rstrip().decode('UTF-8')
+            toplevel = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
         except subprocess.CalledProcessError as e:
             print("Failed to determine git toplevel from current dir: %s" % e)
             return RESULT_ERROR
