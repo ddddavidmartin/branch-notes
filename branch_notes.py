@@ -37,9 +37,9 @@ def main():
                         help=("The project directory name under which the "
                               "notes file for the given branch is created."))
     parser.add_argument('--editor', type=str,
-                        help="The program to create and open notes. Uses this "
+                        help=("The program to create and open notes. Uses this "
                               "variable if set, otherwise environment variable "
-                              "'%s' or finally vi." % EDITOR_VARIABLE)
+                              "'%s' or finally vi." % EDITOR_VARIABLE))
     options = parser.parse_args()
 
     # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
