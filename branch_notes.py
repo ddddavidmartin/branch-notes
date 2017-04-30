@@ -12,6 +12,9 @@ import sys
 # Environment variable name that is used to specify the notes directory.
 NOTES_DIR_VARIABLE = 'NOTES_DIR'
 
+# Environment variable name that is used to specify the notes editor.
+EDITOR_VARIABLE = 'EDITOR'
+
 RESULT_SUCCESS = 0
 RESULT_ERROR = 1
 
@@ -32,6 +35,10 @@ def main():
     parser.add_argument(TOPLEVEL_OPTION, type=str,
                         help=("The project directory name under which the "
                               "notes file for the given branch is created."))
+    parser.add_argument('--editor', type=str,
+                        help="The program to create and open notes. Uses this "
+                              "variable if set, otherwise environment variable "
+                              "'%s' or finally vi." % EDITOR_VARIABLE)
     options = parser.parse_args()
 
     # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
@@ -80,7 +87,14 @@ def main():
 
     notes_file = notes_dir + '/' + branch + '.txt'
 
-    editor_cmd = ['vim', notes_file]
+    if options.editor:
+        editor = options.editor
+    else:
+        try:
+            editor = os.environ[EDITOR_VARIABLE]
+        except KeyError:
+            editor = "vi"
+    editor_cmd = [editor, notes_file]
     try:
         subprocess.run(editor_cmd)
     except subprocess.CalledProcessError as e:
