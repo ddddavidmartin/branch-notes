@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-# Open and edit notes for the given git branch.
+"""Open and edit notes for the given git branch."""
 
 import argparse
 import os
@@ -24,6 +24,7 @@ CURRENT_BRANCH_OPTION = '-'
 
 
 def main():
+    """Main function for branch_notes."""
     descr = ("Open and edit notes for the given branch. "
              "By default a notes file is created under "
              "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
