@@ -76,7 +76,7 @@ def main():
         # It is necessary to expand a tilde in the as otherwise the following
         # os.makedirs call creates a directory called '~'.
         notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
-    except KeyError as e:
+    except KeyError:
         print("Failed to determine notes directory. Set in environment variable "
               "'%s'." % NOTES_DIR_VARIABLE)
         return RESULT_ERROR
