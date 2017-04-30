@@ -52,12 +52,12 @@ def main():
         try:
             # rstrip is necessary to remove the newline of the returned output.
             branch = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
-        except subprocess.CalledProcessError as e:
-            print("Failed to determine git branch from current dir: %s" % e)
+        except subprocess.CalledProcessError as error:
+            print("Failed to determine git branch from current dir: %s" % error)
             return RESULT_ERROR
 
-        p = re.compile(r'^p4/(tasks|spfw)/')
-        branch = p.sub('', branch)
+        pattern = re.compile(r'^p4/(tasks|spfw)/')
+        branch = pattern.sub('', branch)
 
     else:
         branch = options.branch
@@ -69,8 +69,9 @@ def main():
         try:
             # rstrip is necessary to remove the newline of the returned output.
             toplevel = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
-        except subprocess.CalledProcessError as e:
-            print("Failed to determine git toplevel from current dir: %s" % e)
+        except subprocess.CalledProcessError as error:
+            print("Failed to determine git toplevel from current dir: %s" %
+                  error)
             print("Try specifying '%s'." % TOPLEVEL_OPTION)
             return RESULT_ERROR
         toplevel = os.path.basename(toplevel)
@@ -100,8 +101,8 @@ def main():
     editor_cmd = [editor, notes_file]
     try:
         subprocess.run(editor_cmd)
-    except subprocess.CalledProcessError as e:
-        print("Failed to run editor: %s" % e)
+    except subprocess.CalledProcessError as error:
+        print("Failed to run editor: %s" % error)
         return RESULT_ERROR
 
 if __name__ == '__main__':
