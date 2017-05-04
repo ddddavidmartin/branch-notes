@@ -39,9 +39,9 @@ def main():
     parser.add_argument('--editor', type=str,
                         help=("The program used to create and open notes. If "
                               "set, branch_notes uses the given program. "
-                              "Otherwise it tries to use the program specified "
-                              "in the environment variable '%s', or finally "
-                              "vi." % EDITOR_VARIABLE))
+                              "Otherwise it tries to use the program "
+                              "specified in the environment variable '%s', "
+                              "or finally vi." % EDITOR_VARIABLE))
     options = parser.parse_args()
 
     # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
@@ -50,10 +50,12 @@ def main():
         branch = ""
         git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
         try:
+            output = subprocess.check_output(git_cmd, encoding='UTF-8')
             # rstrip is necessary to remove the newline of the returned output.
-            branch = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
+            branch = output.rstrip()
         except subprocess.CalledProcessError as error:
-            print("Failed to determine git branch from current dir: %s" % error)
+            print("Failed to determine git branch from current dir: %s" %
+                  error)
             return RESULT_ERROR
 
         pattern = re.compile(r'^p4/(tasks|spfw)/')
@@ -67,8 +69,9 @@ def main():
     else:
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
+            output = subprocess.check_output(git_cmd, encoding='UTF-8')
             # rstrip is necessary to remove the newline of the returned output.
-            toplevel = subprocess.check_output(git_cmd, encoding='UTF-8').rstrip()
+            toplevel = output.rstrip()
         except subprocess.CalledProcessError as error:
             print("Failed to determine git toplevel from current dir: %s" %
                   error)
@@ -81,8 +84,8 @@ def main():
         # os.makedirs call creates a directory called '~'.
         notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
     except KeyError:
-        print("Failed to determine notes directory. Set in environment variable "
-              "'%s'." % NOTES_DIR_VARIABLE)
+        print("Failed to determine notes directory. Set in environment "
+              "variable '%s'." % NOTES_DIR_VARIABLE)
         return RESULT_ERROR
     notes_dir = notes_dir + '/' + toplevel
     # Instead of checking whether a directory exists, we simply create it if
@@ -104,6 +107,7 @@ def main():
     except subprocess.CalledProcessError as error:
         print("Failed to run editor: %s" % error)
         return RESULT_ERROR
+
 
 if __name__ == '__main__':
     sys.exit(main())
