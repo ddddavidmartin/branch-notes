@@ -30,9 +30,11 @@ def _parse_options():
              "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
              "environment variable '%s'." % NOTES_DIR_VARIABLE)
     parser = argparse.ArgumentParser(description=descr)
-    parser.add_argument(BRANCH_OPTION, type=str,
-                        help=("The branch to use. Specifiy '%s' to use the "
-                              "current git branch." % CURRENT_BRANCH_OPTION))
+    parser.add_argument(BRANCH_OPTION, type=str, nargs='?',
+                        default=CURRENT_BRANCH_OPTION,
+                        help=("The git branch to use. By default and when "
+                              "'%(default)s' is specified branch_notes uses "
+                              "the current git branch."))
     parser.add_argument(TOPLEVEL_OPTION, type=str,
                         help=("The project directory name under which the "
                               "notes file for the given branch is created."))
