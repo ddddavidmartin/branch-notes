@@ -90,7 +90,7 @@ def _determine_toplevel(options):
     return toplevel
 
 
-def _determine_notes_dir(toplevel):
+def _determine_notes_dir():
     """Determine and return the directory to store notes in."""
     try:
         # It is necessary to expand a tilde in the as otherwise the following
@@ -100,7 +100,6 @@ def _determine_notes_dir(toplevel):
         print("Failed to determine notes directory. Set in environment "
               "variable '%s'." % NOTES_DIR_VARIABLE)
         sys.exit(RESULT_ERROR)
-    notes_dir = notes_dir + '/' + toplevel
     return notes_dir
 
 
@@ -122,9 +121,11 @@ def main():
 
     branch = _determine_branch(options)
     toplevel = _determine_toplevel(options)
-    notes_dir = _determine_notes_dir(toplevel)
+    notes_dir = _determine_notes_dir()
     editor = _determine_editor(options)
 
+    # Notes are placed in subdirectories according to their repository.
+    notes_dir = notes_dir + '/' + toplevel
     # Instead of checking whether a directory exists, we simply create it if
     # necessary and allow for it to exist already.
     os.makedirs(notes_dir, exist_ok=True)
