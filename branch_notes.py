@@ -23,6 +23,28 @@ TOPLEVEL_OPTION = '--toplevel'
 CURRENT_BRANCH_OPTION = '-'
 
 
+def _parse_options():
+    """Parse the provided command line parameters."""
+    descr = ("Open and edit notes for the given branch. "
+             "By default a notes file is created under "
+             "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
+             "environment variable '%s'." % NOTES_DIR_VARIABLE)
+    parser = argparse.ArgumentParser(description=descr)
+    parser.add_argument(BRANCH_OPTION, type=str,
+                        help=("The branch to use. Specifiy '%s' to use the "
+                              "current git branch." % CURRENT_BRANCH_OPTION))
+    parser.add_argument(TOPLEVEL_OPTION, type=str,
+                        help=("The project directory name under which the "
+                              "notes file for the given branch is created."))
+    parser.add_argument('--editor', type=str,
+                        help=("The program used to create and open notes. If "
+                              "set, branch_notes uses the given program. "
+                              "Otherwise it tries to use the program "
+                              "specified in the environment variable '%s', "
+                              "or finally vi." % EDITOR_VARIABLE))
+    return parser.parse_args()
+
+
 def _determine_branch(options):
     """Determine the branch to be used from the given options."""
     # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
@@ -84,24 +106,7 @@ def _determine_notes_dir(toplevel):
 
 def main():
     """Main function for branch_notes."""
-    descr = ("Open and edit notes for the given branch. "
-             "By default a notes file is created under "
-             "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
-             "environment variable '%s'." % NOTES_DIR_VARIABLE)
-    parser = argparse.ArgumentParser(description=descr)
-    parser.add_argument(BRANCH_OPTION, type=str,
-                        help=("The branch to use. Specifiy '%s' to use the "
-                              "current git branch." % CURRENT_BRANCH_OPTION))
-    parser.add_argument(TOPLEVEL_OPTION, type=str,
-                        help=("The project directory name under which the "
-                              "notes file for the given branch is created."))
-    parser.add_argument('--editor', type=str,
-                        help=("The program used to create and open notes. If "
-                              "set, branch_notes uses the given program. "
-                              "Otherwise it tries to use the program "
-                              "specified in the environment variable '%s', "
-                              "or finally vi." % EDITOR_VARIABLE))
-    options = parser.parse_args()
+    options = _parse_options()
 
     branch = _determine_branch(options)
     toplevel = _determine_toplevel(options)
