@@ -23,6 +23,65 @@ TOPLEVEL_OPTION = '--toplevel'
 CURRENT_BRANCH_OPTION = '-'
 
 
+def _determine_branch(options):
+    """Determine the branch to be used from the given options."""
+    # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
+    # current git branch.
+    if options.branch == CURRENT_BRANCH_OPTION:
+        branch = ""
+        git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
+        try:
+            output = subprocess.check_output(git_cmd, encoding='UTF-8')
+            # rstrip is necessary to remove the newline of the returned output.
+            branch = output.rstrip()
+        except subprocess.CalledProcessError as error:
+            print("Failed to determine git branch from current dir: %s" %
+                  error)
+            return RESULT_ERROR
+
+        pattern = re.compile(r'^p4/(tasks|spfw)/')
+        branch = pattern.sub('', branch)
+
+    else:
+        branch = options.branch
+
+    return branch
+
+
+def _determine_toplevel(options):
+    """Determine and return the toplevel from the given options."""
+    if options.toplevel:
+        toplevel = options.toplevel
+    else:
+        git_cmd = ['git', 'rev-parse', '--show-toplevel']
+        try:
+            output = subprocess.check_output(git_cmd, encoding='UTF-8')
+            # rstrip is necessary to remove the newline of the returned output.
+            toplevel = output.rstrip()
+        except subprocess.CalledProcessError as error:
+            print("Failed to determine git toplevel from current dir: %s" %
+                  error)
+            print("Try specifying '%s'." % TOPLEVEL_OPTION)
+            return RESULT_ERROR
+        toplevel = os.path.basename(toplevel)
+
+    return toplevel
+
+
+def _determine_notes_dir(toplevel):
+    """Determine and return the directory to store notes in."""
+    try:
+        # It is necessary to expand a tilde in the as otherwise the following
+        # os.makedirs call creates a directory called '~'.
+        notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
+    except KeyError:
+        print("Failed to determine notes directory. Set in environment "
+              "variable '%s'." % NOTES_DIR_VARIABLE)
+        sys.exit(RESULT_ERROR)
+    notes_dir = notes_dir + '/' + toplevel
+    return notes_dir
+
+
 def main():
     """Main function for branch_notes."""
     descr = ("Open and edit notes for the given branch. "
@@ -44,50 +103,10 @@ def main():
                               "or finally vi." % EDITOR_VARIABLE))
     options = parser.parse_args()
 
-    # If CURRENT_BRANCH_OPTION is provided as the target branch we use the
-    # current git branch.
-    if options.branch == CURRENT_BRANCH_OPTION:
-        branch = ""
-        git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
-        try:
-            output = subprocess.check_output(git_cmd, encoding='UTF-8')
-            # rstrip is necessary to remove the newline of the returned output.
-            branch = output.rstrip()
-        except subprocess.CalledProcessError as error:
-            print("Failed to determine git branch from current dir: %s" %
-                  error)
-            return RESULT_ERROR
+    branch = _determine_branch(options)
+    toplevel = _determine_toplevel(options)
+    notes_dir = _determine_notes_dir(toplevel)
 
-        pattern = re.compile(r'^p4/(tasks|spfw)/')
-        branch = pattern.sub('', branch)
-
-    else:
-        branch = options.branch
-
-    if options.toplevel:
-        toplevel = options.toplevel
-    else:
-        git_cmd = ['git', 'rev-parse', '--show-toplevel']
-        try:
-            output = subprocess.check_output(git_cmd, encoding='UTF-8')
-            # rstrip is necessary to remove the newline of the returned output.
-            toplevel = output.rstrip()
-        except subprocess.CalledProcessError as error:
-            print("Failed to determine git toplevel from current dir: %s" %
-                  error)
-            print("Try specifying '%s'." % TOPLEVEL_OPTION)
-            return RESULT_ERROR
-        toplevel = os.path.basename(toplevel)
-
-    try:
-        # It is necessary to expand a tilde in the as otherwise the following
-        # os.makedirs call creates a directory called '~'.
-        notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
-    except KeyError:
-        print("Failed to determine notes directory. Set in environment "
-              "variable '%s'." % NOTES_DIR_VARIABLE)
-        return RESULT_ERROR
-    notes_dir = notes_dir + '/' + toplevel
     # Instead of checking whether a directory exists, we simply create it if
     # necessary and allow for it to exist already.
     os.makedirs(notes_dir, exist_ok=True)
