@@ -42,6 +42,8 @@ def _parse_options():
                               "Otherwise it tries to use the program "
                               "specified in the environment variable '%s', "
                               "or finally vi." % EDITOR_VARIABLE))
+    parser.add_argument('--list', action='store_true',
+                        help="List all existing notes.")
     return parser.parse_args()
 
 
@@ -115,6 +117,18 @@ def _determine_editor(options):
     return editor
 
 
+def _list_notes(notes_dir):
+    """List the existing notes."""
+    for root, _, files in os.walk(notes_dir):
+        if not files:
+            continue
+
+        print("%s: " % os.path.basename(root))
+        for note in files:
+            print("    %s" % os.path.splitext(note)[0])
+        print("")
+
+
 def main():
     """Main function for branch_notes."""
     options = _parse_options()
@@ -123,6 +137,9 @@ def main():
     toplevel = _determine_toplevel(options)
     notes_dir = _determine_notes_dir()
     editor = _determine_editor(options)
+
+    if options.list:
+        return _list_notes(notes_dir)
 
     # Notes are placed in subdirectories according to their repository.
     notes_dir = notes_dir + '/' + toplevel
