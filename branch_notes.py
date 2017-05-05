@@ -63,7 +63,7 @@ def _determine_branch(options):
         except subprocess.CalledProcessError as error:
             print("Failed to determine git branch from current dir: %s" %
                   error)
-            return RESULT_ERROR
+            sys.exit(RESULT_ERROR)
 
         pattern = re.compile(r'^p4/(tasks|spfw)/')
         branch = pattern.sub('', branch)
@@ -88,7 +88,7 @@ def _determine_toplevel(options):
             print("Failed to determine git toplevel from current dir: %s" %
                   error)
             print("Try specifying '%s'." % TOPLEVEL_OPTION)
-            return RESULT_ERROR
+            sys.exit(RESULT_ERROR)
         toplevel = os.path.basename(toplevel)
 
     return toplevel
