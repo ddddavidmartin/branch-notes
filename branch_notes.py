@@ -104,20 +104,8 @@ def _determine_notes_dir(toplevel):
     return notes_dir
 
 
-def main():
-    """Main function for branch_notes."""
-    options = _parse_options()
-
-    branch = _determine_branch(options)
-    toplevel = _determine_toplevel(options)
-    notes_dir = _determine_notes_dir(toplevel)
-
-    # Instead of checking whether a directory exists, we simply create it if
-    # necessary and allow for it to exist already.
-    os.makedirs(notes_dir, exist_ok=True)
-
-    notes_file = notes_dir + '/' + branch + '.txt'
-
+def _determine_editor(options):
+    """Determine the editor to be used to open notes."""
     if options.editor:
         editor = options.editor
     else:
@@ -125,6 +113,24 @@ def main():
             editor = os.environ[EDITOR_VARIABLE]
         except KeyError:
             editor = "vi"
+    return editor
+
+
+def main():
+    """Main function for branch_notes."""
+    options = _parse_options()
+
+    branch = _determine_branch(options)
+    toplevel = _determine_toplevel(options)
+    notes_dir = _determine_notes_dir(toplevel)
+    editor = _determine_editor(options)
+
+    # Instead of checking whether a directory exists, we simply create it if
+    # necessary and allow for it to exist already.
+    os.makedirs(notes_dir, exist_ok=True)
+
+    notes_file = notes_dir + '/' + branch + '.txt'
+
     editor_cmd = [editor, notes_file]
     try:
         subprocess.run(editor_cmd)
