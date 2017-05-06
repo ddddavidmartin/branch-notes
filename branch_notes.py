@@ -126,7 +126,7 @@ def _list_notes(options, notes_dir):
        options.toplevel.
     """
     if options.toplevel:
-        notes_dir = notes_dir + '/' + options.toplevel
+        notes_dir = os.path.join(notes_dir, options.toplevel)
 
     for root, _, files in os.walk(notes_dir):
         if not files:
@@ -151,12 +151,12 @@ def main():
         return _list_notes(options, notes_dir)
 
     # Notes are placed in subdirectories according to their repository.
-    notes_dir = notes_dir + '/' + toplevel
+    notes_dir = os.path.join(notes_dir, toplevel)
     # Instead of checking whether a directory exists, we simply create it if
     # necessary and allow for it to exist already.
     os.makedirs(notes_dir, exist_ok=True)
 
-    notes_file = notes_dir + '/' + branch + '.txt'
+    notes_file = os.path.join(notes_dir, branch + '.txt')
 
     editor_cmd = [editor, notes_file]
     try:
