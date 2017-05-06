@@ -45,7 +45,9 @@ def _parse_options():
                               "specified in the environment variable '%s', "
                               "or finally vi." % EDITOR_VARIABLE))
     parser.add_argument('--list', action='store_true',
-                        help="List all existing notes.")
+                        help=("List all existing notes. If '%s' is specified, "
+                              "only the notes under toplevel are listed." %
+                              TOPLEVEL_OPTION))
     return parser.parse_args()
 
 
@@ -119,8 +121,13 @@ def _determine_editor(options):
     return editor
 
 
-def _list_notes(notes_dir):
-    """List the existing notes."""
+def _list_notes(options, notes_dir):
+    """List all existing notes, or alternatively all notes under
+       options.toplevel.
+    """
+    if options.toplevel:
+        notes_dir = notes_dir + '/' + options.toplevel
+
     for root, _, files in os.walk(notes_dir):
         if not files:
             continue
@@ -141,7 +148,7 @@ def main():
     editor = _determine_editor(options)
 
     if options.list:
-        return _list_notes(notes_dir)
+        return _list_notes(options, notes_dir)
 
     # Notes are placed in subdirectories according to their repository.
     notes_dir = notes_dir + '/' + toplevel
