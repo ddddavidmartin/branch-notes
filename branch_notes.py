@@ -142,13 +142,13 @@ def main():
     """Main function for branch_notes."""
     options = _parse_options()
 
-    branch = _determine_branch(options)
-    toplevel = _determine_toplevel(options)
     notes_dir = _determine_notes_dir()
-    editor = _determine_editor(options)
-
     if options.list:
         return _list_notes(options, notes_dir)
+
+    branch = _determine_branch(options)
+    toplevel = _determine_toplevel(options)
+    editor = _determine_editor(options)
 
     # Notes are placed in subdirectories according to their repository.
     notes_dir = os.path.join(notes_dir, toplevel)
