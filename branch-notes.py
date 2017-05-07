@@ -33,14 +33,14 @@ def _parse_options():
     parser.add_argument(BRANCH_OPTION, type=str, nargs='?',
                         default=CURRENT_BRANCH_OPTION,
                         help=("The git branch to use. By default and when "
-                              "'%(default)s' is specified branch_notes uses "
+                              "'%(default)s' is specified branch-notes uses "
                               "the current git branch."))
     parser.add_argument(TOPLEVEL_OPTION, type=str,
                         help=("The project directory name under which the "
                               "notes file for the given branch is created."))
     parser.add_argument('--editor', type=str,
                         help=("The program used to create and open notes. If "
-                              "set, branch_notes uses the given program. "
+                              "set, branch-notes uses the given program. "
                               "Otherwise it tries to use the program "
                               "specified in the environment variable '%s', "
                               "or finally vi." % EDITOR_VARIABLE))
@@ -139,7 +139,7 @@ def _list_notes(options, notes_dir):
 
 
 def main():
-    """Main function for branch_notes."""
+    """Main function for branch-notes."""
     options = _parse_options()
 
     notes_dir = _determine_notes_dir()
