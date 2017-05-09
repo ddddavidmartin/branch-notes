@@ -133,7 +133,7 @@ def _list_notes(options, notes_dir):
             continue
 
         print("%s: " % os.path.basename(root))
-        for note in files:
+        for note in [note for note in files if not note.startswith('.')]:
             print("    %s" % os.path.splitext(note)[0])
         print("")
 
