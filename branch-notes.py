@@ -110,7 +110,12 @@ def _determine_notes_dir():
 
 
 def _determine_editor(options):
-    """Determine the editor to be used to open notes."""
+    """Determine the editor to be used to open notes.
+
+       Returns a list of the editor command. For example 'vim --noplugin' is
+       returned as ['vim', '--noplugin'] so that it can be called with
+       subprocess.
+    """
     if options.editor:
         editor = options.editor
     else:
@@ -118,7 +123,7 @@ def _determine_editor(options):
             editor = os.environ[EDITOR_VARIABLE]
         except KeyError:
             editor = "vi"
-    return editor
+    return editor.split()
 
 
 def _list_notes(options, notes_dir):
@@ -158,7 +163,7 @@ def main():
 
     notes_file = os.path.join(notes_dir, branch + '.txt')
 
-    editor_cmd = [editor, notes_file]
+    editor_cmd = editor + [notes_file]
     try:
         subprocess.run(editor_cmd)
     except subprocess.CalledProcessError as error:
