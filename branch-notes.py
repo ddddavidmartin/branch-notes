@@ -44,7 +44,7 @@ def _parse_options():
                               "Otherwise it tries to use the program "
                               "specified in the environment variable '%s', "
                               "or finally vi." % EDITOR_VARIABLE))
-    parser.add_argument('--list', action='store_true',
+    parser.add_argument('--list', '-l', action='store_true',
                         help=("List all existing notes. If '%s' is specified, "
                               "only the notes under toplevel are listed." %
                               TOPLEVEL_OPTION))
