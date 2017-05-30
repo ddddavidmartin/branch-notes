@@ -35,7 +35,7 @@ def _parse_options():
                         help=("The git branch to use. By default and when "
                               "'%(default)s' is specified branch-notes uses "
                               "the current git branch."))
-    parser.add_argument(TOPLEVEL_OPTION, type=str,
+    parser.add_argument(TOPLEVEL_OPTION, '-t', type=str,
                         help=("The project directory name under which the "
                               "notes file for the given branch is created."))
     parser.add_argument('--editor', type=str,
