@@ -12,8 +12,8 @@ import sys
 # Environment variable name that is used to specify the notes directory.
 NOTES_DIR_VARIABLE = 'NOTES_DIR'
 
-# Environment variable name that is used to specify the notes editor.
-EDITOR_VARIABLE = 'EDITOR'
+# Generic environment variable name that is used to specify the notes editor.
+EDITOR_VARIABLE = 'BRANCH_NOTES_EDITOR'
 
 RESULT_SUCCESS = 0
 RESULT_ERROR = 1
