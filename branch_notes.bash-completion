@@ -1,0 +1,17 @@
+# branch-notes completion
+# vim: filetype=sh
+
+_branch_notes_complete()
+{
+    local cur opts
+
+    opts="--help -h --toplevel -t --list -l --editor"
+
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+
+    COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+    return 0
+}
+
+complete -F _branch_notes_complete branch-notes
