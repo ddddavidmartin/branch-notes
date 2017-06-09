@@ -15,7 +15,10 @@ By default a notes file is created as `NOTES_DIR/<toplevel>/<branch>.txt`, with
 
 ## Installation
 
-`ln -s branch_notes.py /usr/local/bin/branch-notes`
+```
+cd /usr/local/bin
+ln -s /path/to/repo/branch_notes.py branch-notes
+```
 
 
 ## Usage
