@@ -22,6 +22,9 @@ BRANCH_OPTION = 'branch'
 TOPLEVEL_OPTION = '--toplevel'
 CURRENT_BRANCH_OPTION = '-'
 
+# The file extension used for notes files.
+NOTES_EXT = '.txt'
+
 ACTIONS = ['open', 'list']
 
 
@@ -29,8 +32,8 @@ def _parse_options():
     """Parse the provided command line parameters."""
     descr = ("Open and edit notes for the given branch. "
              "By default a notes file is created under "
-             "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
-             "environment variable '%s'." % NOTES_DIR_VARIABLE)
+             "'NOTES_DIR/toplevel/branch%s'. NOTES_DIR is read from the "
+             "environment variable '%s'." % (NOTES_EXT, NOTES_DIR_VARIABLE))
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('action', choices=ACTIONS,
                         help=("Open note or list existing notes."))
@@ -85,7 +88,7 @@ def _get_output(cmd):
 
 def _find_notes(notes_dir, branch):
     """Return a list of toplevels for the given branch."""
-    note_file = branch + ".txt"
+    note_file = branch + NOTES_EXT
     results = []
     for root, _, files in os.walk(notes_dir):
         if note_file in files:
@@ -200,7 +203,7 @@ def main():
     # necessary and allow for it to exist already.
     os.makedirs(notes_dir, exist_ok=True)
 
-    notes_file = os.path.join(notes_dir, branch + '.txt')
+    notes_file = os.path.join(notes_dir, branch + NOTES_EXT)
 
     editor_cmd = editor + [notes_file]
     try:
