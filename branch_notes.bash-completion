@@ -5,7 +5,9 @@ _branch_notes_complete()
 {
     local cur prev opts
 
-    opts="--help -h --toplevel -t --list -l --editor"
+    allopts="open list --help --toplevel --editor"
+    listopts="--help --toplevel"
+    openopts="--help --toplevel --editor"
 
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -19,8 +21,36 @@ _branch_notes_complete()
             COMPREPLY=($(compgen -W "${toplevels}" -- "${cur}"))
             return 0
             ;;
+        list)
+            COMPREPLY=( $(compgen -W "${listopts}" -- "${cur}") )
+            return 0
+            ;;
+        open)
+            local notes
+            notes=$(find "$NOTES_DIR/" -maxdepth 2 -type f -print \
+                    -name "*.txt" | awk -F/ '{print $NF}' | cut -d "." -f 1)
+            COMPREPLY=($(compgen -W "${notes}" -- "${cur}"))
+            return 0
+            ;;
     esac
 
+    # Depending on the action in the command line we autocomplete with the
+    # appropriate options.
+    local opts
+    opts=$allopts
+    for w in "${COMP_WORDS[@]}"
+    do
+        case "${w}" in
+            open)
+                opts=$openopts
+                break
+                ;;
+            list)
+                opts=$listopts
+                break
+                ;;
+        esac
+    done
     COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
     return 0
 }
