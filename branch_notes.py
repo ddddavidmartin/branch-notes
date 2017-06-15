@@ -22,6 +22,8 @@ BRANCH_OPTION = 'branch'
 TOPLEVEL_OPTION = '--toplevel'
 CURRENT_BRANCH_OPTION = '-'
 
+ACTIONS = ['open', 'list']
+
 
 def _parse_options():
     """Parse the provided command line parameters."""
@@ -30,6 +32,8 @@ def _parse_options():
              "'NOTES_DIR/toplevel/branch.txt'. NOTES_DIR is read from the "
              "environment variable '%s'." % NOTES_DIR_VARIABLE)
     parser = argparse.ArgumentParser(description=descr)
+    parser.add_argument('action', choices=ACTIONS,
+                        help=("Open note or list existing notes."))
     parser.add_argument(BRANCH_OPTION, type=str, nargs='?',
                         default=CURRENT_BRANCH_OPTION,
                         help=("The git branch to use. By default and when "
@@ -44,10 +48,6 @@ def _parse_options():
                               "Otherwise it tries to use the program "
                               "specified in the environment variable '%s', "
                               "or finally vi." % EDITOR_VARIABLE))
-    parser.add_argument('--list', '-l', action='store_true',
-                        help=("List all existing notes. If '%s' is specified, "
-                              "only the notes under toplevel are listed." %
-                              TOPLEVEL_OPTION))
     return parser.parse_args()
 
 
@@ -148,7 +148,7 @@ def main():
     options = _parse_options()
 
     notes_dir = _determine_notes_dir()
-    if options.list:
+    if options.action == 'list':
         return _list_notes(options, notes_dir)
 
     branch = _determine_branch(options)

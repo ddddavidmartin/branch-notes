@@ -23,8 +23,8 @@ ln -s /path/to/repo/branch_notes.py branch-notes
 
 ## Usage
 
-`branch-notes` to open the notes file for the current git repository and branch
+`branch-notes open` to open the notes file for the current git repository and branch
 
-`branch-notes --list` to list all existing notes
+`branch-notes list` to list all existing notes
 
 `branch-notes --help` to show all available options
