@@ -83,11 +83,30 @@ def _get_output(cmd):
     return output.rstrip()
 
 
-def _determine_toplevel(options):
-    """Determine and return the toplevel from the given options."""
+def _find_notes(notes_dir, branch):
+    """Return a list of toplevels for the given branch."""
+    note_file = branch + ".txt"
+    results = []
+    for root, _, files in os.walk(notes_dir):
+        if note_file in files:
+            results.append(os.path.basename(root))
+    return results
+
+
+def _determine_toplevel(options, notes_dir, branch):
+    """Determine and return the toplevel from the given options.
+
+       The toplevel is determined in the following order:
+       1) explicitly specified with TOPLEVEL_OPTION
+       2) from the git toplevel of the current directory if no branch is
+          specified on the commandline
+       3) from the search for the notes file if a branch is given on the
+          commandline
+    """
     if options.toplevel:
-        toplevel = options.toplevel
-    else:
+        return options.toplevel
+
+    elif options.branch == CURRENT_BRANCH_OPTION:
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
             toplevel = _get_output(git_cmd)
@@ -98,7 +117,22 @@ def _determine_toplevel(options):
             sys.exit(RESULT_ERROR)
         toplevel = os.path.basename(toplevel)
 
-    return toplevel
+        return toplevel
+
+    else:
+        toplevels = _find_notes(notes_dir, branch)
+        if len(toplevels) > 1:
+            print("More than one note found for branch '%s'. Specify one of "
+                  "the following toplevel directories: %s" %
+                  (branch, ", ".join(toplevels)))
+            sys.exit(RESULT_ERROR)
+
+        elif len(toplevels) == 1:
+            return toplevels[0]
+
+        else:
+            print("No notes file for branch '%s' found." % branch)
+            sys.exit(RESULT_ERROR)
 
 
 def _determine_notes_dir():
@@ -157,7 +191,7 @@ def main():
         return _list_notes(options, notes_dir)
 
     branch = _determine_branch(options)
-    toplevel = _determine_toplevel(options)
+    toplevel = _determine_toplevel(options, notes_dir, branch)
     editor = _determine_editor(options)
 
     # Notes are placed in subdirectories according to their repository.
