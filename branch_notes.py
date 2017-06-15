@@ -59,9 +59,7 @@ def _determine_branch(options):
         branch = ""
         git_cmd = ['git', 'symbolic-ref', '--short', 'HEAD']
         try:
-            output = subprocess.check_output(git_cmd, encoding='UTF-8')
-            # rstrip is necessary to remove the newline of the returned output.
-            branch = output.rstrip()
+            branch = _get_output(git_cmd)
         except subprocess.CalledProcessError as error:
             print("Failed to determine git branch from current dir: %s" %
                   error)
@@ -76,6 +74,15 @@ def _determine_branch(options):
     return branch
 
 
+def _get_output(cmd):
+    """Return the output of the given subprocess call.
+       Raises a CalledProcessError if anything goes wrong.
+    """
+    output = subprocess.check_output(cmd, encoding='UTF-8')
+    # rstrip is necessary to remove the newline of the returned output.
+    return output.rstrip()
+
+
 def _determine_toplevel(options):
     """Determine and return the toplevel from the given options."""
     if options.toplevel:
@@ -83,9 +90,7 @@ def _determine_toplevel(options):
     else:
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
-            output = subprocess.check_output(git_cmd, encoding='UTF-8')
-            # rstrip is necessary to remove the newline of the returned output.
-            toplevel = output.rstrip()
+            toplevel = _get_output(git_cmd)
         except subprocess.CalledProcessError as error:
             print("Failed to determine git toplevel from current dir: %s" %
                   error)
