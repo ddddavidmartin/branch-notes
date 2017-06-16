@@ -105,11 +105,11 @@ def _determine_toplevel(options, notes_dir, branch):
           specified on the commandline
        3) from the search for the notes file if a branch is given on the
           commandline
+       4) from the current git toplevel if no existing notes file exists for
+          the branch
     """
-    if options.toplevel:
-        return options.toplevel
-
-    elif options.branch == CURRENT_BRANCH_OPTION:
+    def current_toplevel():
+        """Return the toplevel of the current git repo."""
         git_cmd = ['git', 'rev-parse', '--show-toplevel']
         try:
             toplevel = _get_output(git_cmd)
@@ -118,9 +118,13 @@ def _determine_toplevel(options, notes_dir, branch):
                   error)
             print("Try specifying '%s'." % TOPLEVEL_OPTION)
             sys.exit(RESULT_ERROR)
-        toplevel = os.path.basename(toplevel)
+        return os.path.basename(toplevel)
 
-        return toplevel
+    if options.toplevel:
+        return options.toplevel
+
+    elif options.branch == CURRENT_BRANCH_OPTION:
+        return current_toplevel()
 
     else:
         toplevels = _find_notes(notes_dir, branch)
@@ -134,8 +138,7 @@ def _determine_toplevel(options, notes_dir, branch):
             return toplevels[0]
 
         else:
-            print("No notes file for branch '%s' found." % branch)
-            sys.exit(RESULT_ERROR)
+            return current_toplevel()
 
 
 def _determine_notes_dir():
