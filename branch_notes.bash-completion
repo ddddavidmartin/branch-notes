@@ -27,7 +27,7 @@ _branch_notes_complete()
             ;;
         open)
             local notes
-            notes=$(find "$NOTES_DIR/" -maxdepth 2 -type f -print \
+            notes=$(find "$NOTES_DIR/" -maxdepth 2 \( -type f -or -type l \) -print \
                     -name "*.txt" | awk -F/ '{print $NF}' | cut -d "." -f 1)
             COMPREPLY=($(compgen -W "${notes}" -- "${cur}"))
             return 0
