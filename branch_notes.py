@@ -179,11 +179,14 @@ def _list_notes(options, notes_dir):
         notes_dir = os.path.join(notes_dir, options.toplevel)
 
     for root, _, files in os.walk(notes_dir):
-        if not files:
+        notes = [note for note in files if not note.startswith('.') and
+                 note.endswith(NOTES_EXT)]
+
+        if not notes:
             continue
 
         print("%s: " % os.path.basename(root))
-        for note in [note for note in files if not note.startswith('.')]:
+        for note in notes:
             print("    %s" % os.path.splitext(note)[0])
         print("")
 
