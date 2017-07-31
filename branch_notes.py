@@ -6,6 +6,7 @@ import argparse
 import os
 import re
 import subprocess
+import shutil
 import sys
 
 
@@ -22,10 +23,14 @@ BRANCH_OPTION = 'branch'
 TOPLEVEL_OPTION = '--toplevel'
 CURRENT_BRANCH_OPTION = '-'
 
+# The name of the directory used for archiving notes.
+# It created placed as a subdirectory of NOTES_DIR_VARIABLE.
+ARCHIVE_DIR = 'ARCHIVE'
+
 # The file extension used for notes files.
 NOTES_EXT = '.txt'
 
-ACTIONS = ['open', 'list']
+ACTIONS = ['open', 'list', 'archive']
 
 
 def _parse_options():
@@ -36,7 +41,9 @@ def _parse_options():
              "environment variable '%s'." % (NOTES_EXT, NOTES_DIR_VARIABLE))
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('action', choices=ACTIONS,
-                        help=("Open note or list existing notes."))
+                        help=("open - open given note; "
+                              "list - list existing notes; "
+                              "archive - archive given note."))
     parser.add_argument(BRANCH_OPTION, type=str, nargs='?',
                         default=CURRENT_BRANCH_OPTION,
                         help=("The git branch to use. By default and when "
@@ -205,6 +212,22 @@ def _open_note(notes_dir, notes_file, editor):
         return RESULT_ERROR
 
 
+def _archive_note(toplevel, notes_file):
+    """Archive the given notes file."""
+    if not os.path.isfile(notes_file):
+        print("Note does not exist.")
+        return RESULT_ERROR
+
+    archive_dir = os.path.join(_determine_notes_dir(), ARCHIVE_DIR, toplevel)
+    # Instead of checking whether a directory exists, we simply create it if
+    # necessary and allow for it to exist already.
+    os.makedirs(archive_dir, exist_ok=True)
+
+    shutil.move(notes_file,
+                os.path.join(archive_dir, os.path.basename(notes_file)))
+    print("Done.")
+
+
 def main():
     """Main function for branch-notes."""
     options = _parse_options()
@@ -223,6 +246,8 @@ def main():
 
     if options.action == 'open':
         return _open_note(notes_dir, notes_file, editor)
+    elif options.action == 'archive':
+        return _archive_note(toplevel, notes_file)
 
 
 if __name__ == '__main__':
