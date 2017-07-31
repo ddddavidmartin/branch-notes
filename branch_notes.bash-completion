@@ -5,9 +5,10 @@ _branch_notes_complete()
 {
     local cur prev opts
 
-    allopts="open list --help --toplevel --editor"
+    allopts="open list archive --help --toplevel --editor"
     listopts="--help --toplevel"
     openopts="--help --toplevel --editor"
+    archiveopts="--help --toplevel"
 
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
@@ -25,7 +26,7 @@ _branch_notes_complete()
             COMPREPLY=( $(compgen -W "${listopts}" -- "${cur}") )
             return 0
             ;;
-        open)
+        open | archive)
             local notes
             notes=$(find "$NOTES_DIR/" -maxdepth 2 \( -type f -or -type l \) -print \
                     -name "*.txt" | awk -F/ '{print $NF}' | cut -d "." -f 1)
@@ -47,6 +48,10 @@ _branch_notes_complete()
                 ;;
             list)
                 opts=$listopts
+                break
+                ;;
+            archive)
+                opts=$archiveopts
                 break
                 ;;
         esac
