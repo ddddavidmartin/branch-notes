@@ -37,6 +37,6 @@ Same as OSX but use `/usr/bin/` and `/etc/bash_completion.d` instead.
 
 `branch-notes list` to list all existing notes
 
-`branch-notes archive <note>` to archive the given note.
+`branch-notes archive <note>` to archive the given note
 
 `branch-notes --help` to show all available options
