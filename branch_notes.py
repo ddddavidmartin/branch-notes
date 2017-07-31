@@ -191,6 +191,20 @@ def _list_notes(options, notes_dir):
         print("")
 
 
+def _open_note(notes_dir, notes_file, editor):
+    """Open or create the given notes file with the given editor."""
+    # Instead of checking whether a directory exists, we simply create it if
+    # necessary and allow for it to exist already.
+    os.makedirs(notes_dir, exist_ok=True)
+
+    editor_cmd = editor + [notes_file]
+    try:
+        subprocess.run(editor_cmd)
+    except subprocess.CalledProcessError as error:
+        print("Failed to run editor: %s" % error)
+        return RESULT_ERROR
+
+
 def main():
     """Main function for branch-notes."""
     options = _parse_options()
@@ -205,18 +219,10 @@ def main():
 
     # Notes are placed in subdirectories according to their repository.
     notes_dir = os.path.join(notes_dir, toplevel)
-    # Instead of checking whether a directory exists, we simply create it if
-    # necessary and allow for it to exist already.
-    os.makedirs(notes_dir, exist_ok=True)
-
     notes_file = os.path.join(notes_dir, branch + NOTES_EXT)
 
-    editor_cmd = editor + [notes_file]
-    try:
-        subprocess.run(editor_cmd)
-    except subprocess.CalledProcessError as error:
-        print("Failed to run editor: %s" % error)
-        return RESULT_ERROR
+    if options.action == 'open':
+        return _open_note(notes_dir, notes_file, editor)
 
 
 if __name__ == '__main__':
