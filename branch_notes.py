@@ -199,11 +199,15 @@ def _list_notes(options, notes_dir):
         print("")
 
 
-def _open_note(notes_dir, notes_file, editor):
-    """Open or create the given notes file with the given editor."""
+def _makedir(directory):
     # Instead of checking whether a directory exists, we simply create it if
     # necessary and allow for it to exist already.
-    os.makedirs(notes_dir, exist_ok=True)
+    os.makedirs(directory, exist_ok=True)
+
+
+def _open_note(notes_dir, notes_file, editor):
+    """Open or create the given notes file with the given editor."""
+    _makedir(notes_dir)
 
     editor_cmd = editor + [notes_file]
     try:
@@ -220,9 +224,7 @@ def _archive_note(toplevel, notes_file):
         return RESULT_ERROR
 
     archive_dir = os.path.join(_determine_notes_dir(), ARCHIVE_DIR, toplevel)
-    # Instead of checking whether a directory exists, we simply create it if
-    # necessary and allow for it to exist already.
-    os.makedirs(archive_dir, exist_ok=True)
+    _makedir(archive_dir)
 
     shutil.move(notes_file,
                 os.path.join(archive_dir, os.path.basename(notes_file)))
