@@ -97,7 +97,8 @@ def _find_notes(notes_dir, branch):
     """Return a list of toplevels for the given branch."""
     note_file = branch + NOTES_EXT
     results = []
-    for root, _, files in os.walk(notes_dir):
+    for root, dirs, files in os.walk(notes_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d != ARCHIVE_DIR]
         if note_file in files:
             results.append(os.path.basename(root))
     return results
