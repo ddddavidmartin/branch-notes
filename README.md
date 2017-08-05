@@ -15,20 +15,20 @@ By default a notes file is created as `NOTES_DIR/<toplevel>/<branch>.txt`, with
 
 ## Installation
 
-**On OSX:**
-
 ```
-cd /usr/local/bin
-ln -s /path/to/repo/branch_notes.py branch-notes
+git clone git@github.com:ddddavidmartin/branch-notes.git
+cd branch-notes
 
-# To install the bash autocompletion:
-cd /usr/local/etc/bash_completion.d
-ln -s /path/to/repo/branch_notes.bash-completion .
+./waf configure
+./waf install
 ```
 
-**On Linux:**
 
-Same as OSX but use `/usr/bin/` and `/etc/bash_completion.d` instead.
+## Uninstallation
+
+```
+./waf uninstall
+```
 
 
 ## Usage
