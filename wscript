@@ -18,10 +18,26 @@ def options(ctx):
 
 def configure(ctx):
     print("Setting installation directory to " + ctx.options.prefix + ".")
+
+    compl_dir = None
     if ctx.options.bash_compl_prefix:
-        print("Setting Bash completion directory to " +
-              ctx.options.bash_compl_prefix + ".")
-        ctx.env.BASH_COMPL_PREFIX = ctx.options.bash_compl_prefix
+        compl_dir = ctx.options.bash_compl_prefix
+
+    elif platform.system() == 'Darwin':
+        compl_dir = '/usr/local/etc/bash_completion.d'
+
+    elif platform.system() == 'Linux':
+        compl_dir = '/etc/bash_completion.d'
+
+    # We only use the auto-detected directory if it actually exists, as the
+    # user may not have auto completion set up and we do not want to force it.
+    # If the path is explicitly provided we will let waf create it.
+    if compl_dir and os.path.isdir(compl_dir) or ctx.options.bash_compl_prefix:
+        ctx.env.BASH_COMPL_PREFIX = compl_dir
+        print("Setting Bash completion directory to " + compl_dir + ".")
+    else:
+        print("Not setting Bash completion directory. "
+              "Specify with '--bash-compl-prefix=BASH_COMPL_PREFIX' if desired.")
 
 
 def build(bld):
@@ -37,5 +53,5 @@ def build(bld):
         print("Installing autocomp file as well")
         compl_file = 'branch_notes.bash-completion'
         compl_src = os.path.join(bld.top_dir, compl_file)
-        compl_dst = os.path.join(bld.env.AUTOCOMP_PREFIX, compl_file)
+        compl_dst = os.path.join(bld.env.BASH_COMPL_PREFIX, compl_file)
         bld.symlink_as(compl_dst, compl_src)
