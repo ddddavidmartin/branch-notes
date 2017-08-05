@@ -17,9 +17,9 @@ def options(ctx):
 
 
 def configure(ctx):
-    print("Installation directory is set to " + ctx.options.prefix + ".")
+    print("Setting installation directory to " + ctx.options.prefix + ".")
     if ctx.options.bash_compl_prefix:
-        print("Bash completion directory is set to " +
+        print("Setting Bash completion directory to " +
               ctx.options.bash_compl_prefix + ".")
         ctx.env.BASH_COMPL_PREFIX = ctx.options.bash_compl_prefix
 
