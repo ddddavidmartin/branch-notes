@@ -47,10 +47,7 @@ def build(bld):
     # repo are directly applied.
     bld.symlink_as(dest_path, source_path)
 
-    # We only install the bash-completion if a directory is specified, as this
-    # is easier for now than trying to determine the correct directory.
     if bld.env.BASH_COMPL_PREFIX:
-        print("Installing autocomp file as well")
         compl_file = 'branch_notes.bash-completion'
         compl_src = os.path.join(bld.top_dir, compl_file)
         compl_dst = os.path.join(bld.env.BASH_COMPL_PREFIX, compl_file)
