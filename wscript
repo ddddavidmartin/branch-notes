@@ -2,9 +2,13 @@
 # encoding: utf-8
 
 import os
+import platform
 
 top = '.'
 out = 'build'
+
+if platform.system() == 'Darwin' or platform.system() == 'Linux':
+    default_prefix = '/usr/local/bin'
 
 
 def options(ctx):
