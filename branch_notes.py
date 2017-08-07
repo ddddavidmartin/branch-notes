@@ -162,7 +162,7 @@ def _determine_notes_dir():
         # os.makedirs call creates a directory called '~'.
         notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
     except KeyError:
-        notes_dir = os.path.join(Path.home(), DEFAULT_NOTES_DIR_NAME)
+        notes_dir = os.path.join(str(Path.home()), DEFAULT_NOTES_DIR_NAME)
     return notes_dir
 
 
