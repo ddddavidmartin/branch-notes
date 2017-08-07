@@ -4,6 +4,7 @@
 
 import argparse
 import os
+from pathlib import Path
 import re
 import subprocess
 import shutil
@@ -12,6 +13,9 @@ import sys
 
 # Environment variable name that is used to specify the notes directory.
 NOTES_DIR_VARIABLE = 'NOTES_DIR'
+
+# The name for the notes directory if the NOTES_DIR_VARIABLE is not set.
+DEFAULT_NOTES_DIR_NAME = 'branch-notes'
 
 # Generic environment variable name that is used to specify the notes editor.
 EDITOR_VARIABLE = 'BRANCH_NOTES_EDITOR'
@@ -38,7 +42,9 @@ def _parse_options():
     descr = ("Open and edit notes for the given branch. "
              "By default a notes file is created under "
              "'NOTES_DIR/toplevel/branch%s'. NOTES_DIR is read from the "
-             "environment variable '%s'." % (NOTES_EXT, NOTES_DIR_VARIABLE))
+             "environment variable '%s' and defaults to '%s/%s'." %
+             (NOTES_EXT, NOTES_DIR_VARIABLE, Path.home(),
+              DEFAULT_NOTES_DIR_NAME))
     parser = argparse.ArgumentParser(description=descr)
     parser.add_argument('action', choices=ACTIONS,
                         help=("open - open given note; "
@@ -156,9 +162,7 @@ def _determine_notes_dir():
         # os.makedirs call creates a directory called '~'.
         notes_dir = os.path.expanduser(os.environ[NOTES_DIR_VARIABLE])
     except KeyError:
-        print("Failed to determine notes directory. Set in environment "
-              "variable '%s'." % NOTES_DIR_VARIABLE)
-        sys.exit(RESULT_ERROR)
+        notes_dir = os.path.join(Path.home(), DEFAULT_NOTES_DIR_NAME)
     return notes_dir
 
 
