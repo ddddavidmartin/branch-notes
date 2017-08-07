@@ -1,6 +1,9 @@
 # branch-notes completion
 # vim: filetype=sh
 
+# The name for the notes directory if the NOTES_DIR_VARIABLE is not set.
+DEFAULT_NOTES_DIR_NAME="branch-notes"
+
 _branch_notes_complete()
 {
     local cur prev opts
@@ -14,26 +17,32 @@ _branch_notes_complete()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    case "${prev}" in
-        --toplevel | -t)
-            local toplevels
-            toplevels=$(find "$NOTES_DIR/" -maxdepth 1 -type d -print \
-                        -name "[^\.]\*" | awk -F/ '{print $NF}')
-            COMPREPLY=($(compgen -W "${toplevels}" -- "${cur}"))
-            return 0
-            ;;
-        list)
-            COMPREPLY=( $(compgen -W "${listopts}" -- "${cur}") )
-            return 0
-            ;;
-        open | archive)
-            local notes
-            notes=$(find "$NOTES_DIR/" -maxdepth 2 \( -type f -or -type l \) -print \
-                    -name "*.txt" | awk -F/ '{print $NF}' | cut -d "." -f 1)
-            COMPREPLY=($(compgen -W "${notes}" -- "${cur}"))
-            return 0
-            ;;
-    esac
+    if [ -z "$NOTES_DIR" ]; then
+        NOTES_DIR="$HOME/$DEFAULT_NOTES_DIR_NAME"
+    fi
+
+    if [ -d "$NOTES_DIR" ]; then
+        case "${prev}" in
+            --toplevel | -t)
+                local toplevels
+                toplevels=$(find "$NOTES_DIR/" -maxdepth 1 -type d -print \
+                            -name "[^\.]\*" | awk -F/ '{print $NF}')
+                COMPREPLY=($(compgen -W "${toplevels}" -- "${cur}"))
+                return 0
+                ;;
+            list)
+                COMPREPLY=( $(compgen -W "${listopts}" -- "${cur}") )
+                return 0
+                ;;
+            open | archive)
+                local notes
+                notes=$(find "$NOTES_DIR/" -maxdepth 2 \( -type f -or -type l \) -print \
+                        -name "*.txt" | awk -F/ '{print $NF}' | cut -d "." -f 1)
+                COMPREPLY=($(compgen -W "${notes}" -- "${cur}"))
+                return 0
+                ;;
+        esac
+    fi
 
     # Depending on the action in the command line we autocomplete with the
     # appropriate options.
