@@ -99,12 +99,18 @@ def _get_output(cmd):
     return output.rstrip()
 
 
+def _walk_notes_dir(notes_dir):
+    """Walk the given notes_dir whilst skipping the ARCHIVE."""
+    for root, dirs, files in os.walk(notes_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d != ARCHIVE_DIR]
+        yield (root, files)
+
+
 def _find_notes(notes_dir, branch):
     """Return a list of toplevels for the given branch."""
     note_file = branch + NOTES_EXT
     results = []
-    for root, dirs, files in os.walk(notes_dir, topdown=True):
-        dirs[:] = [d for d in dirs if d != ARCHIVE_DIR]
+    for root, files in _walk_notes_dir(notes_dir):
         if note_file in files:
             results.append(os.path.basename(root))
     return results
@@ -190,8 +196,7 @@ def _list_notes(options, notes_dir):
     if options.toplevel:
         notes_dir = os.path.join(notes_dir, options.toplevel)
 
-    for root, dirs, files in os.walk(notes_dir, topdown=True):
-        dirs[:] = [d for d in dirs if d != ARCHIVE_DIR]
+    for root, files in _walk_notes_dir(notes_dir):
         notes = [note for note in files if not note.startswith('.') and
                  note.endswith(NOTES_EXT)]
 
