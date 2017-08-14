@@ -190,7 +190,8 @@ def _list_notes(options, notes_dir):
     if options.toplevel:
         notes_dir = os.path.join(notes_dir, options.toplevel)
 
-    for root, _, files in os.walk(notes_dir):
+    for root, dirs, files in os.walk(notes_dir, topdown=True):
+        dirs[:] = [d for d in dirs if d != ARCHIVE_DIR]
         notes = [note for note in files if not note.startswith('.') and
                  note.endswith(NOTES_EXT)]
 
