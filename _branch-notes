@@ -1,0 +1,61 @@
+#compdef _branch-notes branch-notes
+#
+# branch-notes zsh completion
+# vim: filetype=zsh
+
+function _branch-notes {
+    local line
+
+    _arguments -C \
+        "--help[Show help]" \
+        "1: :(open list archive)" \
+        "*::arg:->args"
+
+    case $line[1] in
+        open)
+            _branch-notes_open
+            ;;
+        list)
+            _branch-notes_list
+            ;;
+        archive)
+            _branch-notes_archive
+            ;;
+    esac
+}
+
+function _branch-notes_open {
+    _arguments \
+        ":branch name:($(find "$NOTES_DIR/" -maxdepth 2 \
+                               \( -type f -or -type l \) -print \
+                               -name "*.txt" | awk -F/ '{print $NF}' | \
+                               cut -d "." -f 1))" \
+        "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
+                                                            -maxdepth 1 -type d -print \
+                                                            -name "[^\.]\*" | \
+                                                            awk -F/ '{print $NF}'))" \
+        "--editor[Specify the editor to open the note with]:editor:()" \
+        "--help[Show help]"
+}
+
+function _branch-notes_list {
+    _arguments \
+        "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
+                                                            -maxdepth 1 -type d -print \
+                                                            -name "[^\.]\*" | \
+                                                            awk -F/ '{print $NF}'))" \
+        "--help[Show help]"
+}
+
+function _branch-notes_archive {
+    _arguments \
+        ":branch name:($(find "$NOTES_DIR/" -maxdepth 2 \
+                               \( -type f -or -type l \) -print \
+                               -name "*.txt" | awk -F/ '{print $NF}' | \
+                               cut -d "." -f 1))" \
+        "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
+                                                            -maxdepth 1 -type d -print \
+                                                            -name "[^\.]\*" | \
+                                                            awk -F/ '{print $NF}'))" \
+        "--help[Show help]"
+}
