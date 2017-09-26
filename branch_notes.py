@@ -18,7 +18,7 @@ NOTES_DIR_VARIABLE = 'NOTES_DIR'
 DEFAULT_NOTES_DIR_NAME = 'branch-notes'
 
 # Generic environment variable name that is used to specify the notes editor.
-EDITOR_VARIABLE = 'BRANCH_NOTES_EDITOR'
+EDITOR_VARIABLE = 'NOTES_EDITOR'
 
 RESULT_SUCCESS = 0
 RESULT_ERROR = 1
