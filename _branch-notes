@@ -33,7 +33,8 @@ function _branch-notes_open {
         "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
                                                             -maxdepth 1 -type d -print \
                                                             -name "[^\.]\*" | \
-                                                            awk -F/ '{print $NF}'))" \
+                                                            awk -F/ '{print $NF}' | \
+                                                            sed -e 's/[[:space:]]/\\\ /g'))" \
         "--editor[Specify the editor to open the note with]:editor:()" \
         "--help[Show help]"
 }
@@ -43,7 +44,8 @@ function _branch-notes_list {
         "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
                                                             -maxdepth 1 -type d -print \
                                                             -name "[^\.]\*" | \
-                                                            awk -F/ '{print $NF}'))" \
+                                                            awk -F/ '{print $NF}' | \
+                                                            sed -e 's/[[:space:]]/\\\ /g'))" \
         "--help[Show help]"
 }
 
@@ -56,6 +58,7 @@ function _branch-notes_archive {
         "--toplevel[Specify toplevel directory]:toplevel:($(find "$NOTES_DIR/" \
                                                             -maxdepth 1 -type d -print \
                                                             -name "[^\.]\*" | \
-                                                            awk -F/ '{print $NF}'))" \
+                                                            awk -F/ '{print $NF}' | \
+                                                            sed -e 's/[[:space:]]/\\\ /g'))" \
         "--help[Show help]"
 }
