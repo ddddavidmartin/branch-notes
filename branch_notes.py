@@ -41,7 +41,7 @@ def _parse_options():
     """Parse the provided command line parameters."""
     descr = ("Open and edit notes for the given branch. "
              "By default a notes file is created under "
-             "'NOTES_DIR/toplevel/branch%s'. NOTES_DIR is read from the "
+             "'NOTES_DIR/<toplevel>/<branch>%s'. NOTES_DIR is read from the "
              "environment variable '%s' and defaults to '%s/%s'." %
              (NOTES_EXT, NOTES_DIR_VARIABLE, Path.home(),
               DEFAULT_NOTES_DIR_NAME))
