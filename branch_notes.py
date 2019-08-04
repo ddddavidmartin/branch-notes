@@ -143,22 +143,21 @@ def _determine_toplevel(options, notes_dir, branch):
     if options.toplevel:
         return options.toplevel
 
-    elif options.branch == CURRENT_BRANCH_OPTION:
+    if options.branch == CURRENT_BRANCH_OPTION:
         return current_toplevel()
 
+    toplevels = _find_notes(notes_dir, branch)
+    if len(toplevels) > 1:
+        print("More than one note found for branch '%s'. Specify one of "
+              "the following toplevel directories: %s" %
+              (branch, ", ".join(toplevels)))
+        sys.exit(RESULT_ERROR)
+
+    elif len(toplevels) == 1:
+        return toplevels[0]
+
     else:
-        toplevels = _find_notes(notes_dir, branch)
-        if len(toplevels) > 1:
-            print("More than one note found for branch '%s'. Specify one of "
-                  "the following toplevel directories: %s" %
-                  (branch, ", ".join(toplevels)))
-            sys.exit(RESULT_ERROR)
-
-        elif len(toplevels) == 1:
-            return toplevels[0]
-
-        else:
-            return current_toplevel()
+        return current_toplevel()
 
 
 def _determine_notes_dir():
