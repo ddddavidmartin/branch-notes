@@ -37,6 +37,10 @@ NOTES_EXT = '.txt'
 ACTIONS = ['open', 'list', 'archive']
 
 
+class BranchNotesError(Exception):
+    """Generic error class for expected errors when running branch-notes"""
+
+
 def _parse_options():
     """Parse the provided command line parameters."""
     descr = ("Open and edit notes for the given branch. "
@@ -222,15 +226,13 @@ def _open_note(notes_dir, notes_file, editor):
     try:
         subprocess.run(editor_cmd)
     except subprocess.CalledProcessError as error:
-        print("Failed to run editor: %s" % error)
-        return RESULT_ERROR
+        raise BranchNotesError(f"Failed to run editor: {error}")
 
 
 def _archive_note(toplevel, notes_file):
     """Archive the given notes file."""
     if not os.path.isfile(notes_file):
-        print("Note does not exist.")
-        return RESULT_ERROR
+        raise BranchNotesError(f"Note '{notes_file}' does not exist.")
 
     archive_dir = os.path.join(_determine_notes_dir(), ARCHIVE_DIR, toplevel)
     _makedir(archive_dir)
@@ -246,7 +248,8 @@ def main():
 
     notes_dir = _determine_notes_dir()
     if options.action == 'list':
-        return _list_notes(options, notes_dir)
+        _list_notes(options, notes_dir)
+        return
 
     branch = _determine_branch(options)
     toplevel = _determine_toplevel(options, notes_dir, branch)
@@ -257,10 +260,15 @@ def main():
     notes_file = os.path.join(notes_dir, branch + NOTES_EXT)
 
     if options.action == 'open':
-        return _open_note(notes_dir, notes_file, editor)
+        _open_note(notes_dir, notes_file, editor)
     elif options.action == 'archive':
-        return _archive_note(toplevel, notes_file)
+        _archive_note(toplevel, notes_file)
 
 
 if __name__ == '__main__':
-    sys.exit(main())
+    try:
+        main()
+    except BranchNotesError as error:
+        print(f"Error: {error}")
+        sys.exit(RESULT_ERROR)
+    sys.exit(RESULT_SUCCESS)
